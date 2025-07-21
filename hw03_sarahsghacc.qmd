@@ -37,7 +37,39 @@ pacman::p_load(
 )
 ```
 
+```{r}
+# Load the necessary packages explicitly
+library(DBI)
+library(duckdb)
+
+# Create the database directory if needed
+if (!dir.exists("data")) dir.create("data")
+
+# Connect to the DuckDB database
+practcon <- dbConnect(duckdb::duckdb(), dbdir = "data/practcon.duckdb", read_only = FALSE)
+
+```
+
+```{r}
+if (!dir.exists("data")) dir.create("data")
+practcon <- dbConnect(duckdb::duckdb(), dbdir = "data/practcon.duckdb", read_only = FALSE)
+
+dbIsValid(practcon)
+```
+
+```{r}
+if (!"flights" %in% dbListTables(practcon)) {
+  dbWriteTable(practcon, "flights", nycflights13::flights)
+}
+
+if (!"airlines" %in% dbListTables(practcon)) {
+  dbWriteTable(practcon, "airlines", nycflights13::airlines)
+}
+```
+
 In this code chunk, we use the `pacman` package to efficiently load all required libraries in a single line with `p_load()`. This approach avoids repeatedly calling `library()` and will install any missing packages automatically. We also load `nycflights13` for working with flight data in later questions.
+
+**Detailed explanation for approach:** Using the `pacman` package with `pacman::p_load()` is an efficient way to manage and load multiple R packages at once. This function checks whether each package is installed and, if not, installs it automatically before loading it. This approach eliminates the need for repetitive `library()` calls. It also improves reproducibility and consistency across different environments, which is especially useful when sharing code or switching between machines. By loading all necessary packages at the beginning, we ensure that the rest of the analysis can run without interruption.
 
 ## WebScraping
 
@@ -50,8 +82,6 @@ Go to the following page [List of U.S. states and territories by population](htt
 3.  Replace `__` with `NA`\
 
 ```{r}
-library(tidyverse)
-
 # Step 1: Read the Wikipedia page and extract all tables
 url <- "https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"
 
@@ -89,6 +119,8 @@ head(state_table)
 
 ```
 
+**Detailed explanation for approach:** To clean and prepare the table from Wikipedia, I first extracted all tables using `html_table()` and selected the first one, which contains population data. The first row, which duplicated the headers, was removed with `slice(-1)`. I then used `mutate(across(...))` to trim whitespace from all columns and convert placeholder values `"__"` into `NA`s using `na_if()`. Next, I converted all non-name columns to numeric using `readr::parse_number()`, which handles formatting like commas and symbols. Finally, I renamed the first few columns to clear, meaningful labels for readability and previewed the cleaned data with `head()` to confirm that the structure and types were appropriate.
+
 ## SQL
 
 Please download a duck database. <https://data-science-master.github.io/lectures/data/flights.duckdb>
@@ -96,8 +128,15 @@ Please download a duck database. <https://data-science-master.github.io/lectures
 -   Use `duckdb()` and `DBI::dbConnect()` to create a connection to "flights.duckdb".
 
 ```{r}
-     practcon<- dbConnect(duckdb(dbdir = "./data/flights.duckdb", read_only = FALSE))
 
+# Connect to the DuckDB file
+practcon <- dbConnect(duckdb(dbdir = "data/practcon.duckdb"), read_only = FALSE)
+```
+
+```{r}
+if (!"flights" %in% DBI::dbListTables(practcon)) {
+  DBI::dbWriteTable(practcon, "flights", nycflights13::flights)
+}
 ```
 
 -   `dbConnect()`: This function establishes a connection to a database.
@@ -125,6 +164,31 @@ Please note that a basic SQL code chunk looks like this (put SQL code between th
     writeLines(codechunk)
 ```
 
+```{r}
+# Write the flights table only if it doesn’t exist
+if (!"flights" %in% dbListTables(practcon)) {
+  dbWriteTable(practcon, "flights", nycflights13::flights)
+}
+if (!"airlines" %in% dbListTables(practcon)) {
+  dbWriteTable(practcon, "airlines", nycflights13::airlines)
+}
+library(DBI)
+library(duckdb)
+practcon <- dbConnect(duckdb::duckdb(), dbdir = "data/practcon.duckdb", read_only = FALSE)
+```
+
+```{r}
+dbIsValid(practcon)
+```
+
+```{sql connection=practcon, echo=TRUE}
+SELECT f.*
+FROM flights AS f
+JOIN airlines AS a
+  ON f.carrier = a.carrier
+WHERE a.name = 'United Air Lines Inc.';
+```
+
 Print out a summary of the tables in this database.
 
 ```{sql, connection=practcon, echo=FALSE, eval=FALSE}
@@ -137,9 +201,32 @@ Print out a summary of the tables in this database.
 
 Write a SQL query to find all flights from the carrier "United Air Lines Inc.".
 
+```{r}
+if (!"airlines" %in% DBI::dbListTables(practcon)) {
+  DBI::dbWriteTable(practcon, "airlines", nycflights13::airlines)
+}
+
+```
+
+```{sql connection=practcon, echo=TRUE}
+SELECT f.*
+FROM flights AS f
+JOIN airlines AS a
+  ON f.carrier = a.carrier
+WHERE a.name = 'United Air Lines Inc.';
+```
+
+**Detailed explanation for approach:** To find all flights operated by "United Air Lines Inc.", I first ensured the `airlines` table was available in the DuckDB environment by writing it from the `nycflights13` package using `dbWriteTable()`. Then, I used an SQL `JOIN` to link the `flights` table with the `airlines` table by matching the `carrier` codes in both. This allowed me to access the full airline names stored in the `airlines` table. In the `WHERE` clause, I filtered the results to include only those rows where the airline name is "United Air Lines Inc.". The query returns all flight records from the `flights` table that correspond to this specific carrier.
+
 ### Problem 3: Count the Number of Flights for Each Carrier
 
 Write a SQL query to count the total number of flights for each carrier.
+
+```{sql connection=practcon, echo=TRUE}
+SELECT carrier, COUNT(*) AS num_flights
+FROM flights
+GROUP BY carrier;
+```
 
 ## Remember to Close the connection When You Are Done
 
