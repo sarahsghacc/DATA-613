@@ -1,0 +1,4 @@
+"0","SELECT carrier, COUNT(*) AS num_flights
+FROM flights
+GROUP BY carrier;"
+"1","DuckDB progress:   0%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%DuckDB progress:  99%                     "

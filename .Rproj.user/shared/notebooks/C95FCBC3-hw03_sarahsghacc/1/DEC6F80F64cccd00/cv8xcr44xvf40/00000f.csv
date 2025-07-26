@@ -1,0 +1,12 @@
+"0",""
+"0","DBI::dbListTables(practcon)"
+"2","G1;H1;Errorh in h(simpleError(msg, call)) : 
+  error in evaluating the argument 'conn' in selecting a method for function 'dbListTables': object 'practcon' not found
+g"
+"0","# Assuming practcon is already connected"
+"0","dbWriteTable(practcon, ""flights"", nycflights13::flights)"
+"2","G1;H1;Errorh in dbWriteTable(practcon, ""flights"", nycflights13::flights) : 
+  could not find function ""dbWriteTable""
+Error during wrapup: not that many frames on the stack
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+g"

@@ -1,0 +1,10 @@
+"0","# Load the necessary packages explicitly"
+"0","library(DBI)"
+"0","library(duckdb)"
+"0",""
+"0","# Create the database directory if needed"
+"0","if (!dir.exists(""data"")) dir.create(""data"")"
+"0",""
+"0","# Connect to the DuckDB database"
+"0","practcon <- dbConnect(duckdb::duckdb(), dbdir = ""data/practcon.duckdb"", read_only = FALSE)"
+"1","                     "

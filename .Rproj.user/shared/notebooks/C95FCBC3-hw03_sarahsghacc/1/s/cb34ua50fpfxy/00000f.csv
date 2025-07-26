@@ -1,0 +1,42 @@
+"0","# Step 1: Read the Wikipedia page and extract all tables"
+"0","url <- ""https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"""
+"0",""
+"0","tables <- url |>"
+"0","  read_html() |>"
+"0","  html_table(fill = TRUE)"
+"0",""
+"0","# Extract the first table"
+"0","raw_table <- tables[[1]]"
+"0",""
+"0","# Step 1: Load and clean"
+"0","state_table <- raw_table |>"
+"0","  clean_names() |>            # Make column names syntactic (no duplicates)"
+"0","  slice(-1) |>                # Remove first row (repeated headers)"
+"0","  mutate(across(everything(), str_trim)) |>    # Trim all whitespace"
+"0","  mutate(across(everything(), ~ na_if(.x, ""__"")))  # Convert ""__"" to NA"
+"0",""
+"0","# Step 2: Convert all columns *except the first one* to numbers"
+"0","# This handles commas, $, %, etc."
+"0","state_table <- state_table |>"
+"0","  mutate(across(-1, readr::parse_number))  # parse_number keeps only digits & decimals"
+"2","G2;H2;Warningh: [38;5;232mThere were 5 warnings in `mutate()`.
+The first warning was:[39m
+[38;5;232m[36mℹ[38;5;232m In argument: `across(-1, readr::parse_number)`.[39m
+Caused by warning:
+[33m![39m 1 parsing failure.
+row col expected actual
+ 60  -- a number    N/A
+[38;5;232m[36mℹ[38;5;232m Run ]8;;ide:run:dplyr::last_dplyr_]8;;ide:run:warnings()warnings()]8;;dplyr::last_dplyr_]8;;ide:run:warnings()warnings()]8;;]8;; to see the 4 remaining warnings.[39mg
+"
+"0","# Step 3: Optional: Rename for clarity (so you know what these weird names mean)"
+"0","names(state_table)[1:6] <- c("
+"0","  ""state"","
+"0","  ""pop_2024"","
+"0","  ""pop_2020"","
+"0","  ""pct_change_2010_2020"","
+"0","  ""abs_change_2010_2020"","
+"0","  ""house_seats"""
+"0",")"
+"0",""
+"0","# Preview cleaned data"
+"0","head(state_table)"

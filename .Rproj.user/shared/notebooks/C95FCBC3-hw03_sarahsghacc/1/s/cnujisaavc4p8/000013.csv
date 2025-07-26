@@ -1,0 +1,4 @@
+"0","if (!""airlines"" %in% DBI::dbListTables(practcon)) {"
+"0","  DBI::dbWriteTable(practcon, ""airlines"", nycflights13::airlines)"
+"0","}"
+"1","DuckDB progress:   0%                     "

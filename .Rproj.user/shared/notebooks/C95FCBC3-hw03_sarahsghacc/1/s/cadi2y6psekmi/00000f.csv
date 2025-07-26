@@ -1,0 +1,6 @@
+"0","    codechunk <- ""```{sql, connection=con}\n\n```"""
+"0","    writeLines(codechunk)"
+"1","```{sql, connection=con}
+
+```
+"

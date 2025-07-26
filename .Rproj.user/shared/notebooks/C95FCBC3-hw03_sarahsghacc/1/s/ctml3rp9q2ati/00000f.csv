@@ -1,0 +1,7 @@
+"0","if (!""flights"" %in% dbListTables(practcon)) {"
+"0","  dbWriteTable(practcon, ""flights"", nycflights13::flights)"
+"0","}"
+"1","                     "
+"0","if (!""airlines"" %in% dbListTables(practcon)) {"
+"0","  dbWriteTable(practcon, ""airlines"", nycflights13::airlines)"
+"0","}"

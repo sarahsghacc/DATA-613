@@ -1,0 +1,5 @@
+"0","SELECT f.*
+FROM flights AS f
+JOIN airlines AS a
+  ON f.carrier = a.carrier
+WHERE a.name = 'United Air Lines Inc.';"

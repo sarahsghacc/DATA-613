@@ -1,0 +1,4 @@
+"0",""
+"0","# Connect to the DuckDB file"
+"0","practcon <- dbConnect(duckdb(dbdir = ""data/practcon.duckdb""), read_only = FALSE)"
+"1","                     "
