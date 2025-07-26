@@ -1,0 +1,3 @@
+"0","if (!""flights"" %in% DBI::dbListTables(practcon)) {"
+"0","  DBI::dbWriteTable(practcon, ""flights"", nycflights13::flights)"
+"0","}"
